@@ -26,7 +26,8 @@ public class Passenger extends Actor {
     private static Randomable think;
     private static Randomable eatTime;
     private static QueueForTransactions bagQueue;
-    public static void _init(Randomable eat, QueueForTransactions bagQ) {
+    private static Airport airport;
+    public static void _init(Randomable eat, QueueForTransactions bagQ, Airport port) {
         // think = brain;
         eatTime = eat;
         bagQueue = bagQ;
@@ -43,6 +44,7 @@ public class Passenger extends Actor {
     protected void rule() {
         //время прибытия в аэропорт
         cameTime = dispatcher.getCurrentTime();
+        airport.passengerCame();
         while (!isGetBag) {
             if (Math.random() >= 0.5) {
                 //идем кушать
@@ -66,6 +68,7 @@ public class Passenger extends Actor {
 
         //время покидания аэропорта
         leftTime = dispatcher.getCurrentTime();
+        airport.passengerLeft();
     }
 
     public double getStayTime() {
