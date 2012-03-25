@@ -12,6 +12,10 @@ import simulation.process.Actor;
  */
 public class Carrier extends Actor{
 
+    public static void _init(){
+        
+    }
+    
     @Override
     protected void rule() {
         throw new UnsupportedOperationException("Not supported yet.");
