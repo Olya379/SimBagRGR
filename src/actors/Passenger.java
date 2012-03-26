@@ -23,7 +23,7 @@ public class Passenger extends Actor {
     private double leftTime;
     private Dispatcher dispatcher;
     private boolean isGetBag;
-    private int bagCnt;
+    private double bagCnt;
     private int givenBag;
     private boolean isProcessed;
     //private static Randomable think;
@@ -37,7 +37,7 @@ public class Passenger extends Actor {
         
     }
 
-    public Passenger(int bagC) {
+    public Passenger(double bagC) {
         super();
         isGetBag = false;
         bagCnt = bagC;
