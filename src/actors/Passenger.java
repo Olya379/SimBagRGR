@@ -95,6 +95,9 @@ public class Passenger extends Actor {
          return isGetBag;
     }
     
+    public void setProcessed(){
+        isProcessed = true;
+    }
 }
 
 
