@@ -23,7 +23,10 @@ public class Passenger extends Actor {
     private double leftTime;
     private Dispatcher dispatcher;
     private boolean isGetBag;
-    private static Randomable think;
+    private int bagCnt;
+    private int givenBag;
+    private boolean isProcessed;
+    //private static Randomable think;
     private static Randomable eatTime;
     private static QueueForTransactions bagQueue;
     private static Airport airport;
@@ -34,9 +37,11 @@ public class Passenger extends Actor {
         
     }
 
-    public Passenger() {
+    public Passenger(int bagC) {
         super();
         isGetBag = false;
+        bagCnt = bagC;
+        givenBag = 0;
 
     }
 
@@ -46,6 +51,7 @@ public class Passenger extends Actor {
         cameTime = dispatcher.getCurrentTime();
         airport.passengerCame();
         while (!isGetBag) {
+            isProcessed = false;
             if (Math.random() >= 0.5) {
                 //идем кушать
                 holdForTime(eatTime.next());
@@ -57,7 +63,7 @@ public class Passenger extends Actor {
 
                     @Override
                     public boolean testCondition() {
-                        return isGetBag;
+                        return isProcessed;
                     }
                 });
             } catch (DispatcherFinishException ex) {
@@ -79,8 +85,14 @@ public class Passenger extends Actor {
         return cameTime;
     }
     
-    public void giveBag(){
-        isGetBag=true;
+    public boolean giveBag(){
+        if(givenBag == bagCnt){ 
+            isGetBag=true;
+        }else{
+            givenBag++;
+            isGetBag = false;
+        }         
+         return isGetBag;
     }
     
 }
