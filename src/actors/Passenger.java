@@ -50,7 +50,8 @@ public class Passenger extends Actor {
         //время прибытия в аэропорт
         cameTime = dispatcher.getCurrentTime();
         airport.passengerCame();
-        while (!isGetBag) {
+        
+        while (!isGetBag && bagCnt != 0) {
             isProcessed = false;
             if (Math.random() >= 0.5) {
                 //идем кушать
@@ -69,7 +70,7 @@ public class Passenger extends Actor {
             } catch (DispatcherFinishException ex) {
                 Logger.getLogger(Passenger.class.getName()).log(Level.SEVERE, null, ex);
             }
-            bagQueue.remove(this);
+            //bagQueue.remove(this);
         }
 
         //время покидания аэропорта
@@ -98,6 +99,10 @@ public class Passenger extends Actor {
     public void setProcessed(){
         isProcessed = true;
     }
+    public boolean isProcessed(){
+        return isProcessed;
+    }
+    
 }
 
 
