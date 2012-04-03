@@ -49,17 +49,20 @@ public class Passenger extends Actor {
     protected void rule() {
         //время прибытия в аэропорт
         cameTime = dispatcher.getCurrentTime();
+        //зарегистрировались в аэропорту
         airport.passengerCame();
-        
+        //если у нас был багаж ждем пока нам его не выдадут
         while (!isGetBag && bagCnt != 0) {
             isProcessed = false;
+            //А не пойти ли нам покушать?           
             if (Math.random() >= 0.5) {
                 //идем кушать
                 holdForTime(eatTime.next());
             }
-            //становимся в очередь
+            //становимся в очередь за сумкой
             bagQueue.addLast(this);
             try {
+                //ждем пока нас обслужат в очереди
                 waitForCondition(new IWaitCondition() {
 
                     @Override
@@ -78,14 +81,17 @@ public class Passenger extends Actor {
         airport.passengerLeft();
     }
 
+    //узнать время покидания аэропорта
     public double getStayTime() {
         return leftTime - cameTime;
     }
 
+    //узнать время прибытия
     public double getCameTime() {
         return cameTime;
     }
     
+    //вручить пасажиру сумку
     public boolean giveBag(){
         if(givenBag == bagCnt){ 
             isGetBag=true;
@@ -96,9 +102,12 @@ public class Passenger extends Actor {
          return isGetBag;
     }
     
+    //Обрабатываем чувака
     public void setProcessed(){
         isProcessed = true;
     }
+    
+    //а не обработан ли я)
     public boolean isProcessed(){
         return isProcessed;
     }
