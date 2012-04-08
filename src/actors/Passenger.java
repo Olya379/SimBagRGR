@@ -6,12 +6,12 @@ package actors;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import simulation.process.Actor;
-import simulation.process.Dispatcher;
-import simulation.process.DispatcherFinishException;
-import simulation.process.IWaitCondition;
-import simulation.queues.QueueForTransactions;
-import simulation.rnd.Randomable;
+import process.Actor;
+import process.Dispatcher;
+import process.DispatcherFinishException;
+import process.IWaitCondition;
+import queues.QueueForTransactions;
+import rnd.Randomable;
 
 /**
  *
@@ -21,20 +21,21 @@ public class Passenger extends Actor {
 
     private double cameTime;
     private double leftTime;
-    private Dispatcher dispatcher;
+    // private Dispatcher dispatcher;
     private boolean isGetBag;
     private double bagCnt;
     private int givenBag;
     private boolean isProcessed;
-    //private static Randomable think;
     private static Randomable eatTime;
     private static QueueForTransactions bagQueue;
     private static Airport airport;
+
     public static void _init(Randomable eat, QueueForTransactions bagQ, Airport port) {
         // think = brain;
         eatTime = eat;
         bagQueue = bagQ;
-        
+        airport = port;
+
     }
 
     public Passenger(double bagC) {
@@ -48,16 +49,20 @@ public class Passenger extends Actor {
     @Override
     protected void rule() {
         //время прибытия в аэропорт
-        cameTime = dispatcher.getCurrentTime();
+        cameTime = getDispatcher().getCurrentTime();
+        leftTime = cameTime;
         //зарегистрировались в аэропорту
         airport.passengerCame();
         //если у нас был багаж ждем пока нам его не выдадут
         while (!isGetBag && bagCnt != 0) {
             isProcessed = false;
             //А не пойти ли нам покушать?           
-            if (Math.random() >= 0.5) {
+            if (Math.random() >= 0.3) {
                 //идем кушать
+                System.out.println("Пассажир " + getNameForProtocol() + " идет кушать");
                 holdForTime(eatTime.next());
+                System.out.println("Пассажир " + getNameForProtocol() + " покушал");
+
             }
             //становимся в очередь за сумкой
             bagQueue.addLast(this);
@@ -69,16 +74,24 @@ public class Passenger extends Actor {
                     public boolean testCondition() {
                         return isProcessed;
                     }
+
+                    @Override
+                    public String toString() {
+                        return "Ждет пока придет его очередь";
+                    }
                 });
             } catch (DispatcherFinishException ex) {
-                Logger.getLogger(Passenger.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Диспетчер завершил работу");
+                leftTime = getDispatcher().getCurrentTime();
+                return;
             }
             //bagQueue.remove(this);
         }
 
         //время покидания аэропорта
-        leftTime = dispatcher.getCurrentTime();
+        leftTime = getDispatcher().getCurrentTime();
         airport.passengerLeft();
+        System.out.println("Пассажир " + getNameForProtocol() + " покинул аеропорт");
     }
 
     //узнать время покидания аэропорта
@@ -90,28 +103,25 @@ public class Passenger extends Actor {
     public double getCameTime() {
         return cameTime;
     }
-    
+
     //вручить пасажиру сумку
-    public boolean giveBag(){
-        if(givenBag == bagCnt){ 
-            isGetBag=true;
-        }else{
+    public boolean giveBag() {
+        if (givenBag == bagCnt) {
+            isGetBag = true;
+        } else {
             givenBag++;
             isGetBag = false;
-        }         
-         return isGetBag;
+        }
+        return isGetBag;
     }
-    
+
     //Обрабатываем чувака
-    public void setProcessed(){
+    public void setProcessed() {
         isProcessed = true;
     }
-    
+
     //а не обработан ли я)
-    public boolean isProcessed(){
+    public boolean isProcessed() {
         return isProcessed;
     }
-    
 }
-
-

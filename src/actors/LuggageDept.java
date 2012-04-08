@@ -6,13 +6,13 @@ package actors;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import simulation.process.Actor;
-import simulation.process.DispatcherFinishException;
-import simulation.process.IWaitCondition;
-import simulation.queues.QueueForTransactions;
-import simulation.queues.Store;
-import simulation.rnd.Randomable;
-import simulation.widgets.Diagram;
+import process.Actor;
+import process.DispatcherFinishException;
+import process.IWaitCondition;
+import queues.QueueForTransactions;
+import queues.Store;
+import rnd.Randomable;
+import widgets.Diagram;
 
 /**
  * Класс представляющий модель багажного отдела
@@ -24,18 +24,24 @@ public class LuggageDept extends Actor {
     //генератор количества багажа у пассажира
     private static Randomable prodRandGenerator;
     //очередь пассажиров
-    public QueueForTransactions passengersQue;
+    private static QueueForTransactions passengersQue;
     //хранилище багажа 
-    private Store bagInDeptCount;
+    private static Store bagInDeptCount;
     //максимальное количество багажа в отделении
-    private int maxBagInDeptCount;
+    private static int maxBagInDeptCount;
     //время моделирования
     private static double modelingTime;
 
     //инициализация статических полей класса
-    public static void _init(Randomable productiv, double workingTime) {
+    public static void _init(Randomable productiv, double workingTime, int maxBagCnt) {
         prodRandGenerator = productiv;
         modelingTime = workingTime;
+        passengersQue = new QueueForTransactions();
+        passengersQue.init();
+        bagInDeptCount = new Store();
+        bagInDeptCount.init();
+
+        maxBagInDeptCount = maxBagCnt;
     }
 
     public LuggageDept(Diagram passengerQueDiag, Diagram bagStoreDiagram, double maxBagCnt) {
@@ -48,6 +54,7 @@ public class LuggageDept extends Actor {
     @Override
     protected void rule() {
         //условие появления багажа в отделении
+        bagInDeptCount.setDispatcher(getDispatcher());
         IWaitCondition bagSize = new IWaitCondition() {
 
             @Override
@@ -61,13 +68,13 @@ public class LuggageDept extends Actor {
 
             }
         };
-        
+
         //условия наличия пассажиров в очереди
         IWaitCondition isAnyPassenger = new IWaitCondition() {
 
             @Override
             public boolean testCondition() {
-                return passengersQue.size() > 0 && !((Passenger) (passengersQue.peekFirst())).isProcessed();
+                return getPassengersQue().size() > 0;
             }
 
             @Override
@@ -80,22 +87,26 @@ public class LuggageDept extends Actor {
         while (getDispatcher().getCurrentTime() < modelingTime) {
             try {
                 //ждем появления багажа
+                System.out.println("Ждем багажа");
                 waitForCondition(bagSize);
             } catch (DispatcherFinishException ex) {
-                Logger.getLogger(LuggageDept.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Диспетчер завершил работу");
+                return;
             }
             try {
                 //ждать появления пассаажиров
+                System.out.println("Ждем пассажиров");
                 waitForCondition(isAnyPassenger);
             } catch (DispatcherFinishException ex) {
-                Logger.getLogger(LuggageDept.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Диспетчер закончил работу");
+                return;
             }
             //выбираем пассажира из очереди
-            Passenger pass = (Passenger) (passengersQue.peekFirst());
+            Passenger pass = (Passenger) (getPassengersQue().peekFirst());
             getDispatcher().printToProtocol(getNameForProtocol() + " обслуживает пассажира " + pass.getNameForProtocol());
-            
+
             //а прибыл ли багаж нашего пассажира?
-            if (Math.random() > 0.5) {
+            if (Math.random() > 0.4) {
                 while (bagInDeptCount.getSize() > 0 && !pass.giveBag()) {
                     bagInDeptCount.remove(1);
                 }
@@ -105,7 +116,7 @@ public class LuggageDept extends Actor {
             pass.setProcessed();
             getDispatcher().printToProtocol(getNameForProtocol() + " обслужил пассажира " + pass.getNameForProtocol());
             //выбрасываем пассажира из очереди
-            passengersQue.remove(pass);
+            getPassengersQue().remove(pass);
         }
     }
 
@@ -119,5 +130,9 @@ public class LuggageDept extends Actor {
             return true;
         }
         return false;
+    }
+
+    public static QueueForTransactions getPassengersQue() {
+        return passengersQue;
     }
 }

@@ -4,6 +4,15 @@
  */
 package gui;
 
+import actors.Airport;
+import actors.Carrier;
+import actors.LuggageDept;
+import actors.Passenger;
+import java.awt.Color;
+import java.util.EventObject;
+import process.Dispatcher;
+import process.DispatcherFinishListener;
+
 /**
  *
  * @author lordgal
@@ -29,16 +38,32 @@ public class main_gui extends javax.swing.JFrame {
         jSplitPane1 = new javax.swing.JSplitPane();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
-        passengerDiagram = new simulation.widgets.Diagram();
-        passengerQueDiagram = new simulation.widgets.Diagram();
-        bagCountDiagram = new simulation.widgets.Diagram();
+        passengerDiagram = new widgets.Diagram();
+        passengerQueDiagram = new widgets.Diagram();
+        bagCountDiagram = new widgets.Diagram();
         jPanel3 = new javax.swing.JPanel();
-        diagram1 = new simulation.widgets.Diagram();
+        statDiagram = new widgets.Diagram();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
-        cartCapacityData = new simulation.widgets.ChooseData();
-        chooseData2 = new simulation.widgets.ChooseData();
+        cartCapacityData = new widgets.ChooseData();
+        cartCapacityData.setTitle("Емкость тележки");
+        modelingTimeData = new widgets.ChooseData();
+        travelTimeRandom = new widgets.ChooseRandom();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        bagCntRandom = new widgets.ChooseRandom();
+        jLabel3 = new javax.swing.JLabel();
+        passProcProdRandom = new widgets.ChooseRandom();
+        bagInDeptData = new widgets.ChooseData();
+        bagInDeptData.setTitle("Количество мест для багажа");
+        jButton1 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        planeTimeRandom = new widgets.ChooseRandom();
+        passCountRandom = new widgets.ChooseRandom();
+        jLabel5 = new javax.swing.JLabel();
+        cartCntData = new widgets.ChooseData();
+        cartCntData.setTitle("Количество тележек");
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
 
@@ -50,7 +75,7 @@ public class main_gui extends javax.swing.JFrame {
 
         passengerQueDiagram.setTitleText("Пассажиров в очереди");
 
-        bagCountDiagram.setTitleText("Количество багажа");
+        bagCountDiagram.setTitleText("Количество багажа в отделении");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -60,8 +85,8 @@ public class main_gui extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(passengerDiagram, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(passengerQueDiagram, javax.swing.GroupLayout.DEFAULT_SIZE, 567, Short.MAX_VALUE)
-                    .addComponent(bagCountDiagram, javax.swing.GroupLayout.DEFAULT_SIZE, 567, Short.MAX_VALUE))
+                    .addComponent(passengerQueDiagram, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
+                    .addComponent(bagCountDiagram, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -78,7 +103,7 @@ public class main_gui extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("tab1", jPanel2);
 
-        diagram1.setTitleText("Время проведенное в аэропорту");
+        statDiagram.setTitleText("Время проведенное в аэропорту");
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -91,7 +116,7 @@ public class main_gui extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(diagram1, javax.swing.GroupLayout.DEFAULT_SIZE, 567, Short.MAX_VALUE)
+                    .addComponent(statDiagram, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
                 .addContainerGap())
         );
@@ -99,7 +124,7 @@ public class main_gui extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(diagram1, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(statDiagram, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
                 .addContainerGap())
@@ -116,7 +141,44 @@ public class main_gui extends javax.swing.JFrame {
             }
         });
 
-        chooseData2.setText("chooseData1");
+        modelingTimeData.setText("1000");
+        modelingTimeData.setTitle("Время моделирования");
+        modelingTimeData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modelingTimeDataActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Время тележек в дороге");
+
+        jLabel2.setText("Количество багажа у пассажиров");
+
+        jLabel3.setText("Продуктивность обслуживания пассажиров");
+
+        bagInDeptData.setText("1000");
+        bagInDeptData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bagInDeptDataActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Начать моделирование");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Время между самолетами");
+
+        jLabel5.setText("Количество пассажиров в самолете");
+
+        cartCntData.setText("10");
+        cartCntData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cartCntDataActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -125,18 +187,65 @@ public class main_gui extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(chooseData2, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
-                    .addComponent(cartCapacityData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(modelingTimeData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(travelTimeRandom, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bagCntRandom, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(bagInDeptData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(cartCapacityData, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(cartCntData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(passProcProdRandom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4)
+                            .addComponent(planeTimeRandom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(passCountRandom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(cartCapacityData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cartCapacityData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cartCntData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(chooseData2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(507, Short.MAX_VALUE))
+                .addComponent(modelingTimeData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(bagInDeptData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(travelTimeRandom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(bagCntRandom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(passProcProdRandom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(planeTimeRandom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(passCountRandom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jSplitPane1.setLeftComponent(jPanel1);
@@ -152,7 +261,7 @@ public class main_gui extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 949, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -169,6 +278,53 @@ public class main_gui extends javax.swing.JFrame {
     private void cartCapacityDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cartCapacityDataActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cartCapacityDataActionPerformed
+
+    private void modelingTimeDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelingTimeDataActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_modelingTimeDataActionPerformed
+
+    private void bagInDeptDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bagInDeptDataActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bagInDeptDataActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        passengerDiagram.setPainterColor(Color.red);
+        bagCountDiagram.setPainterColor(Color.red);
+        passengerQueDiagram.setPainterColor(Color.red);
+        Dispatcher dsp = new Dispatcher();
+        Airport port = new Airport(modelingTimeData.getInt(), 100500, planeTimeRandom, passCountRandom, passengerDiagram,
+                statDiagram, bagCountDiagram, jTextArea1, bagCntRandom,dsp);
+        LuggageDept._init(passProcProdRandom, modelingTimeData.getInt(),bagInDeptData.getInt());
+        LuggageDept dept = new LuggageDept(passengerQueDiagram, bagCountDiagram, bagInDeptData.getInt());
+        LuggageDept.getPassengersQue().setDispatcher(dsp);
+        Carrier._init(travelTimeRandom, port, passProcProdRandom, modelingTimeData.getInt(), dept);
+        Passenger._init(bagCntRandom, dept.getPassengersQue(), port);
+        for (int i = 0; i < cartCntData.getInt(); i++) {
+            Carrier cart = new Carrier(cartCapacityData.getInt());
+            cart.setNameForProtocol("Carrier" + i);
+            dsp.addStartingActor(cart);
+        }
+
+        dsp.addStartingActor(dept);
+        dsp.addStartingActor(port);
+        dsp.start();
+        dsp.addDispatcherFinishListener(
+                new DispatcherFinishListener() {
+                    public void onDispatcherFinish(EventObject evt) {
+                        jButton1.setEnabled(true);
+                    }
+
+            @Override
+            public void onDispatcherFinish() {
+                System.out.println("Диспетчер завершился внезапно");
+            }
+                });
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void cartCntDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cartCntDataActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cartCntDataActionPerformed
 
     /**
      * @param args the command line arguments
@@ -212,10 +368,17 @@ public class main_gui extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private simulation.widgets.Diagram bagCountDiagram;
-    private simulation.widgets.ChooseData cartCapacityData;
-    private simulation.widgets.ChooseData chooseData2;
-    private simulation.widgets.Diagram diagram1;
+    private widgets.ChooseRandom bagCntRandom;
+    private widgets.Diagram bagCountDiagram;
+    private widgets.ChooseData bagInDeptData;
+    private widgets.ChooseData cartCapacityData;
+    private widgets.ChooseData cartCntData;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
@@ -225,7 +388,13 @@ public class main_gui extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextArea1;
-    private simulation.widgets.Diagram passengerDiagram;
-    private simulation.widgets.Diagram passengerQueDiagram;
+    private widgets.ChooseData modelingTimeData;
+    private widgets.ChooseRandom passCountRandom;
+    private widgets.ChooseRandom passProcProdRandom;
+    private widgets.Diagram passengerDiagram;
+    private widgets.Diagram passengerQueDiagram;
+    private widgets.ChooseRandom planeTimeRandom;
+    private widgets.Diagram statDiagram;
+    private widgets.ChooseRandom travelTimeRandom;
     // End of variables declaration//GEN-END:variables
 }
