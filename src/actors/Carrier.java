@@ -4,12 +4,9 @@
  */
 package actors;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import process.Actor;
 import process.DispatcherFinishException;
 import process.IWaitCondition;
-import queues.QueueForTransactions;
 import rnd.Randomable;
 
 /**
@@ -28,15 +25,11 @@ public class Carrier extends Actor {
     private static Airport airport;
     //багажное отделение
     private static LuggageDept dept;
-    //
+    //время которое тратится на 
     private static Randomable productivity;
     //время моделирования
     private static double modelingTime;
-    //очередь на получение багажа в аеропорту
-    //используется только для возможности отрисовки
-    //т.к. самолетов много и все происходит паралельно тележки сами добавляют и 
-    //удаляют себя из очереди
-  //  private static QueueForTransactions loadQue;
+
 
     public static void _init(Randomable travTime, Airport port, Randomable product, int modelTime, LuggageDept dpt) {
         airport = port;
@@ -98,6 +91,8 @@ public class Carrier extends Actor {
             while (realBagCap != bagCapacity && airport.getBagFromAirport()) {
                 System.out.println("Тедежка " + getNameForProtocol() + " загружает одну единицу багажа");
                 realBagCap++;
+                //мы же тратим время на загрузку)
+                holdForTime(productivity.next());
             }
 
             //загружаемся и едем обратно 

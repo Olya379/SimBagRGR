@@ -20,22 +20,34 @@ import widgets.Diagram;
  */
 public class Airport extends Actor {
 
-    
+    //Промежутки времени между прилетом самолетов
     private static Randomable planeTimeGenerator;
+    //количество пассажиров в самолете
     private static Randomable passangersGenerator;
+    //количество багажа у пассажира
     private static Randomable bagGenerator;
+    //количество пассажиров в аэропорту
     private int passengersCount;
+    //диспетчер
     private Dispatcher dispatcher;
+    //диаграмма отображающая количество пассажиров в аэропорту
     private Diagram passDiagram;
+    //Диаграмма отображения статистики
     private Diagram statisticDiagram;
+    //время моделирования
     private int modelingTime;
+    //номер рейса по счету
     private int flightNum;
+    //колекция прибывших пассажиров
     private ArrayList<Passenger> passengers;
     private Histo histo;
     private JTextComponent textOutput;
+    //максимальное число самолетов(в модели используется чисто формально, введено на будущее)
     private int maxPlanecount;
-    private Store bagCountInAirport;   //один пассажир привозит с собой n единиц багажа
     //хранит количество багажа в аэропорту
+    //один пассажир привозит с собой n единиц багажа
+    private Store bagCountInAirport;   
+    
 
     public Airport(int modelTime, int maxPlaneCnt, Randomable plane,
             Randomable passenger, Diagram passengerDiagram,
@@ -61,11 +73,13 @@ public class Airport extends Actor {
     }
 
     public void passengerCame() {
+        //по прибытию пассажир отмечается 
         passDiagram.getPainter().drawToXY((float) dispatcher.getCurrentTime(), ++passengersCount);
         System.out.println("Количество пассажиров в аэропорту: " + passengersCount);
     }
 
     public void passengerLeft() {
+        //и уходя из аэропорта пассажир тоже отмечается
         passDiagram.getPainter().drawToXY((float) dispatcher.getCurrentTime(), --passengersCount);
         System.out.println("Количество пассажиров в аэропорту: " + passengersCount);
     }
@@ -75,6 +89,7 @@ public class Airport extends Actor {
     }
 
     public boolean getBagFromAirport() {
+        //забирает одну единицу багажа из аэропорта
         if (bagCountInAirport.getSize() > 0) {
             bagCountInAirport.remove(1);
             return true;
@@ -84,12 +99,17 @@ public class Airport extends Actor {
 
     @Override
     protected void rule() {
+        //пока не наступило время завершения моделирования или не превысили
+        //количество самолетов
         while (dispatcher.getCurrentTime() < modelingTime && flightNum <= maxPlanecount) {
+            //задерживаемся до следующего самолета
             holdForTime(planeTimeGenerator.next());
+            //генерируем самолет
             flightNum++;
+            //генерируем пассажиров
             double arrivals = passangersGenerator.next();
             System.out.println("Прибыл самолет с : " + arrivals + " пассажирами на борту");
-            //  passengersCount += arrivals;
+            //Выдаем багаж пассажирам и отдаем их диспетчеру
             for (int i = 0; i < arrivals; i++) {
                 double bagTmp = bagGenerator.next();
                 bagCountInAirport.add(bagTmp);
@@ -99,6 +119,7 @@ public class Airport extends Actor {
                 dispatcher.addStartingActor(pass);
             }
         }
+        //считаем статистику и отрисовуем гистограму
         drawDiagram();
     }
 
@@ -114,6 +135,7 @@ public class Airport extends Actor {
         histo = new Histo(0, modelingTime, modelingTime / 10);
         for (Iterator<Passenger> it = passengers.iterator(); it.hasNext();) {
             Passenger passenger = it.next();
+            //не вижу смысла учитывать пассажиров которых не обслужили
             if(passenger.getStayTime() == 0){
                 continue;
             }

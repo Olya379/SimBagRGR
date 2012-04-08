@@ -18,15 +18,22 @@ import rnd.Randomable;
  * @author lordgal
  */
 public class Passenger extends Actor {
-
+    
+    //время прибытия в аэропорт
     private double cameTime;
+    //время покидания аэропорта
     private double leftTime;
-    // private Dispatcher dispatcher;
+    //выдали ли ему его багаж
     private boolean isGetBag;
+    //количество багажа которое было у него с собой
     private double bagCnt;
+    //количество багажа которое он получил
     private int givenBag;
+    //флажок означающий, что пассажира обслужили
     private boolean isProcessed;
+    //время которое пассажир тратит на еду
     private static Randomable eatTime;
+    //Очередь куда становятся пассажири чтобы получить багаж
     private static QueueForTransactions bagQueue;
     private static Airport airport;
 
