@@ -92,7 +92,7 @@ public class Carrier extends Actor {
                 System.out.println("Тедежка " + getNameForProtocol() + " загружает одну единицу багажа");
                 realBagCap++;
                 //мы же тратим время на загрузку)
-                holdForTime(productivity.next());
+             //   holdForTime(productivity.next());
             }
 
             //загружаемся и едем обратно 

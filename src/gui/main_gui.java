@@ -9,6 +9,7 @@ import actors.Carrier;
 import actors.LuggageDept;
 import actors.Passenger;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.util.EventObject;
 import process.Dispatcher;
 import process.DispatcherFinishListener;
@@ -143,6 +144,11 @@ public class main_gui extends javax.swing.JFrame {
 
         modelingTimeData.setText("1000");
         modelingTimeData.setTitle("Время моделирования");
+        modelingTimeData.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                modelingTimeDataCaretUpdate(evt);
+            }
+        });
         modelingTimeData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 modelingTimeDataActionPerformed(evt);
@@ -156,6 +162,11 @@ public class main_gui extends javax.swing.JFrame {
         jLabel3.setText("Продуктивность обслуживания пассажиров");
 
         bagInDeptData.setText("1000");
+        bagInDeptData.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                bagInDeptDataCaretUpdate(evt);
+            }
+        });
         bagInDeptData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bagInDeptDataActionPerformed(evt);
@@ -288,6 +299,9 @@ public class main_gui extends javax.swing.JFrame {
     }//GEN-LAST:event_bagInDeptDataActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        passengerDiagram.clear();
+        bagCountDiagram.clear();
+        passengerQueDiagram.clear();
         passengerDiagram.setPainterColor(Color.red);
         bagCountDiagram.setPainterColor(Color.red);
         passengerQueDiagram.setPainterColor(Color.red);
@@ -325,6 +339,17 @@ public class main_gui extends javax.swing.JFrame {
     private void cartCntDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cartCntDataActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cartCntDataActionPerformed
+
+    private void modelingTimeDataCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_modelingTimeDataCaretUpdate
+        
+        passengerDiagram.setHorizontalMaxText(""+modelingTimeData.getInt());
+        bagCountDiagram.setHorizontalMaxText(""+modelingTimeData.getInt());
+        passengerQueDiagram.setHorizontalMaxText(""+modelingTimeData.getInt());
+    }//GEN-LAST:event_modelingTimeDataCaretUpdate
+
+    private void bagInDeptDataCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_bagInDeptDataCaretUpdate
+        bagCountDiagram.setVerticalMaxText(""+bagInDeptData.getInt());
+    }//GEN-LAST:event_bagInDeptDataCaretUpdate
 
     /**
      * @param args the command line arguments
