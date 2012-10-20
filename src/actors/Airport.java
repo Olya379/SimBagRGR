@@ -34,6 +34,8 @@ public class Airport extends Actor {
     private Diagram passDiagram;
     //Диаграмма отображения статистики
     private Diagram statisticDiagram;
+    //Диаграмма времени в очередях
+    private Diagram statisticDiagram_que;
     //время моделирования
     private int modelingTime;
     //номер рейса по счету
@@ -42,6 +44,7 @@ public class Airport extends Actor {
     private ArrayList<Passenger> passengers;
     private Histo histo;
     private JTextComponent textOutput;
+    private JTextComponent textOutput_que;
     //максимальное число самолетов(в модели используется чисто формально, введено на будущее)
     private int maxPlanecount;
     //хранит количество багажа в аэропорту
@@ -51,11 +54,13 @@ public class Airport extends Actor {
 
     public Airport(int modelTime, int maxPlaneCnt, Randomable plane,
             Randomable passenger, Diagram passengerDiagram,
-            Diagram statDiagram, Diagram bagDiagramm,
-            JTextComponent text, Randomable bag, Dispatcher dsp) {
+            Diagram statDiagram,Diagram statDiagram_1, Diagram bagDiagramm,
+            JTextComponent text,JTextComponent text_1, Randomable bag, Dispatcher dsp) {
         passengersCount = 0;
         flightNum = 0;
 
+        textOutput_que=text_1;
+        statisticDiagram_que=statDiagram_1;
         dispatcher = dsp;
         planeTimeGenerator = plane;
         passangersGenerator = passenger;
@@ -143,5 +148,17 @@ public class Airport extends Actor {
         }
         histo.showRelFrec(statisticDiagram);
         textOutput.setText(histo.toString());
+        
+        Histo hst = new Histo(0, modelingTime, modelingTime / 10);
+        for (Iterator<Passenger> it = passengers.iterator(); it.hasNext();) {
+            Passenger passenger = it.next();
+            //не вижу смысла учитывать пассажиров которых не обслужили
+            if(passenger.getStayTime() == 0){
+                continue;
+            }
+            hst.add(passenger.getEatTimeSpend());
+        }
+        hst.showRelFrec(statisticDiagram_que);
+        textOutput_que.setText(hst.toString());
     }
 }

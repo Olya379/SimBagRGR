@@ -37,6 +37,9 @@ public class Passenger extends Actor {
     private static QueueForTransactions bagQueue;
     private static Airport airport;
 
+    private double eatTimeSpend;
+
+    
     public static void _init(Randomable eat, QueueForTransactions bagQ, Airport port) {
         // think = brain;
         eatTime = eat;
@@ -67,7 +70,9 @@ public class Passenger extends Actor {
             if (Math.random() >= 0.3) {
                 //идем кушать
                 System.out.println("Пассажир " + getNameForProtocol() + " идет кушать");
+                eatTimeSpend+=getDispatcher().getCurrentTime();
                 holdForTime(eatTime.next());
+                eatTimeSpend+=getDispatcher().getCurrentTime();
                 System.out.println("Пассажир " + getNameForProtocol() + " покушал");
 
             }
@@ -130,5 +135,13 @@ public class Passenger extends Actor {
     //а не обработан ли я)
     public boolean isProcessed() {
         return isProcessed;
+    }
+    
+    public double getBagCnt() {
+        return bagCnt;
+    }
+    
+    public double getEatTimeSpend() {
+        return eatTimeSpend;
     }
 }
